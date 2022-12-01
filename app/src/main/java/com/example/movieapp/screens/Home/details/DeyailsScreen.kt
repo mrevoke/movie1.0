@@ -1,7 +1,10 @@
 package com.example.movieapp.screens.Home.details
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -12,11 +15,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import com.example.movieapp.Widgets.MovieRow
+import com.example.movieapp.model.Movie
+import com.example.movieapp.model.getMovies
+
 @Preview
 @Composable
-fun DetailsScreen(navController: NavController, string: String?){
+fun DetailsScreen(navController: NavController, MovieId: String?){
 
-    
+    val newMovieList= getMovies().filter { movie->
+        movie.id==MovieId
+    }
     Scaffold(topBar = {
         TopAppBar(backgroundColor = Color.Transparent, elevation = 5.dp) {
           Row(horizontalArrangement = Arrangement.Start) {
@@ -33,13 +43,15 @@ Spacer(modifier = Modifier.width(100.dp) )
 
 
         Surface(modifier = Modifier
-    .fillMaxHeight()
-    .fillMaxWidth()) {
+            .fillMaxHeight()
+            .fillMaxWidth()) {
     Column(horizontalAlignment = Alignment.CenterHorizontally
-    , verticalArrangement = Arrangement.Center) {
-        Text(text = string.toString(), style = MaterialTheme.typography.h5)
-Spacer(modifier = Modifier.height(23.dp))
-
+    , verticalArrangement = Arrangement.Top) {
+        MovieRow(movie = newMovieList.first())
+        Spacer(modifier = Modifier.height(8.dp))
+        Divider()
+        Text(text = "Movie Images")
+        Horizontalscroolableimgview(newMovieList)
 
     }
 
@@ -48,4 +60,22 @@ Spacer(modifier = Modifier.height(23.dp))
 }
     }
 
+}
+
+@Composable
+private fun Horizontalscroolableimgview(newMovieList: List<Movie>) {
+    LazyRow {
+        items(newMovieList[0].images) { image ->
+            Card(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(240.dp), elevation = 5.dp
+            ) {
+                Image(
+                    painter = rememberImagePainter(data = image),
+                    contentDescription = "movie poster"
+                )
+            }
+        }
+    }
 }
